@@ -1,6 +1,6 @@
 package models
 
-import "github.com/gofrs/uuid"
+import "github.com/gofrs/uuid/v5"
 
 type CalibrationDataEvent struct {
 	NodeIdentifier   string    `json:"nodeIdentifier"`

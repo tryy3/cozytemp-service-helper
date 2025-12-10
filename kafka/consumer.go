@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/segmentio/kafka-go"
@@ -11,13 +12,22 @@ type Consumer struct {
 	reader *kafka.Reader
 }
 
+func ConsumerLogger(msg string, a ...interface{}) {
+	args := make([]any, 0)
+	for i := 0; i < len(a); i++ {
+		args = append(args, fmt.Sprintf("arg%d", i), a[i])
+	}
+	slog.Info(msg, args...)
+}
 func NewConsumer(brokers []string, topic, groupID string) *Consumer {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  brokers,
-		Topic:    topic,
-		GroupID:  groupID,
-		MinBytes: 10e3, // 10KB
-		MaxBytes: 10e6, // 10MB
+		Brokers:     brokers,
+		Topic:       topic,
+		GroupID:     groupID,
+		MinBytes:    10e3, // 10KB
+		MaxBytes:    10e6, // 10MB
+		Logger:      kafka.LoggerFunc(ConsumerLogger),
+		ErrorLogger: kafka.LoggerFunc(ConsumerLogger),
 	})
 
 	return &Consumer{reader: reader}
